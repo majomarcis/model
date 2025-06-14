@@ -14,10 +14,13 @@
   <body>
     <div id="cesiumContainer"></div>
     <script>
-      Cesium.Ion.defaultAccessToken = ''; // Nepotrebujeme
+      // Nepoužívaj Cesium Ion
+      Cesium.Ion.defaultAccessToken = undefined;
 
       const viewer = new Cesium.Viewer('cesiumContainer', {
-        terrainProvider: new Cesium.EllipsoidTerrainProvider(), // namiesto createWorldTerrain
+        imageryProvider: new Cesium.OpenStreetMapImageryProvider(), // bez potreby tokenu
+        terrainProvider: new Cesium.EllipsoidTerrainProvider(),     // základný elipsoid
+        baseLayerPicker: false,                                     // skryje prepínač mapy
       });
 
       viewer.scene.primitives.add(
