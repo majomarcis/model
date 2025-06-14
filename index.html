@@ -14,10 +14,10 @@
   <body>
     <div id="cesiumContainer"></div>
     <script>
-      Cesium.Ion.defaultAccessToken = ''; // Nepotrebujeme, ak nepoužívaš Ion
+      Cesium.Ion.defaultAccessToken = ''; // Nepotrebujeme
 
       const viewer = new Cesium.Viewer('cesiumContainer', {
-        terrainProvider: Cesium.createWorldTerrain()
+        terrainProvider: new Cesium.EllipsoidTerrainProvider(), // namiesto createWorldTerrain
       });
 
       viewer.scene.primitives.add(
