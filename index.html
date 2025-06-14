@@ -2,47 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cesium 3D Tiles FlyTo Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cesium FlyTo Demo</title>
+  <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css">
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <link rel="icon" href="data:,">
   <style>
     html, body, #cesiumContainer {
-      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
   <div id="cesiumContainer"></div>
   <script>
-    // Inicializácia mapy
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      terrainProvider: Cesium.createWorldTerrain()
+    // Overenie podpory createWorldTerrain
+    const terrainProvider = Cesium.createWorldTerrain?.() || new Cesium.EllipsoidTerrainProvider();
+
+    // Inicializácia viewer-a
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: terrainProvider,
+      shouldAnimate: true,
     });
 
-    // Načítanie hlavného tilesetu
-    const tileset = viewer.scene.primitives.add(
-      new Cesium.Cesium3DTileset({
-        url: "Data/tileset.json"
-      })
-    );
-
-    // Po načítaní tilesetu
-    tileset.readyPromise.then(function () {
-      // Zalietni ku konkrétnemu pod-tilesetu, ak chceš napr. "Data/f00012/tileset.json"
-      // Musíš ho samostatne načítať ako nový tileset
-      const subTileset = viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: "Data/f00012/tileset.json"
-        })
-      );
-
-      subTileset.readyPromise.then(function () {
-        viewer.flyTo(subTileset);
-      }).otherwise(function (error) {
-        console.error("Chyba pri načítaní subTilesetu:", error);
-      });
-    }).otherwise(function (error) {
-      console.error("Chyba pri načítaní tilesetu:", error);
+    // Kamera prelet nad miestom
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(19.6961, 49.3002, 5000),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+        roll: 0.0,
+      },
     });
   </script>
 </body>
