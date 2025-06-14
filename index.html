@@ -1,34 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Cesium 3D Tiles Viewer</title>
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
-    <style>
-      html, body, #cesiumContainer {
-        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script>
-      const viewer = new Cesium.Viewer('cesiumContainer', {
-        terrainProvider: Cesium.createWorldTerrain(),
-      });
+<head>
+  <meta charset="UTF-8" />
+  <title>Cesium 3D Tiles FlyTo Example</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    // Inicializácia mapy
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      terrainProvider: Cesium.createWorldTerrain()
+    });
 
-      const tileset = new Cesium.Cesium3DTileset({
-        url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
-      });
+    // Načítanie hlavného tilesetu
+    const tileset = viewer.scene.primitives.add(
+      new Cesium.Cesium3DTileset({
+        url: "Data/tileset.json"
+      })
+    );
 
-      viewer.scene.primitives.add(tileset);
+    // Po načítaní tilesetu
+    tileset.readyPromise.then(function () {
+      // Zalietni ku konkrétnemu pod-tilesetu, ak chceš napr. "Data/f00012/tileset.json"
+      // Musíš ho samostatne načítať ako nový tileset
+      const subTileset = viewer.scene.primitives.add(
+        new Cesium.Cesium3DTileset({
+          url: "Data/f00012/tileset.json"
+        })
+      );
 
-      tileset.readyPromise.then(function () {
-        viewer.zoomTo(tileset);
+      subTileset.readyPromise.then(function () {
+        viewer.flyTo(subTileset);
       }).otherwise(function (error) {
-        console.error('Načítanie tilesetu zlyhalo:', error);
+        console.error("Chyba pri načítaní subTilesetu:", error);
       });
-    </script>
-  </body>
+    }).otherwise(function (error) {
+      console.error("Chyba pri načítaní tilesetu:", error);
+    });
+  </script>
+</body>
 </html>
