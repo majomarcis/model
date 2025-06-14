@@ -14,10 +14,8 @@
 <body>
   <div id="cesiumContainer"></div>
   <script>
-    // Nastav svoj Cesium Ion token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
-    // Vytvor viewer s novým terénom
     const viewer = new Cesium.Viewer('cesiumContainer', {
       terrainProvider: new Cesium.CesiumTerrainProvider({
         url: Cesium.IonResource.fromAssetId(1)
@@ -26,19 +24,17 @@
       animation: false,
     });
 
-    // Pridaj 3D tileset
     const tilesetPrimitive = new Cesium.Cesium3DTileset({
-      url: 'tileset.json'  // Tu uprav podľa svojej cesty k tileset.json
+      url: 'tileset.json'  // uprav podľa seba
     });
     viewer.scene.primitives.add(tilesetPrimitive);
 
-    // Po načítaní tilesetu nastav kameru
-    tilesetPrimitive.readyPromise.then(() => {
+    tilesetPrimitive.ready.then(() => {
       viewer.camera.flyToBoundingSphere(tilesetPrimitive.boundingSphere, {
         duration: 3,
         offset: new Cesium.HeadingPitchRange(0, -0.5, tilesetPrimitive.boundingSphere.radius * 2)
       });
-    }).otherwise(error => {
+    }).catch(error => {
       console.error('Chyba pri načítaní tilesetu:', error);
     });
   </script>
