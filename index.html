@@ -21,31 +21,33 @@
     // Nastav Cesium Ion access token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
-    // Vytvor viewer a nastav Cesium World Terrain ručne
-const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: new Cesium.CesiumTerrainProvider({
-        url: Cesium.IonResource.fromAssetId(1)
-      }),
-      timeline: false,
-      animation: false,
-    });
-
-    // Načítaj 3D tileset
-    const tileset = new Cesium.Cesium3DTileset({
-      url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
-    });
-
-    viewer.scene.primitives.add(tileset);
-
-    // Access readyPromise on the tileset instance
-    tileset.readyPromise.then(() => {
-      const boundingSphere = tileset.boundingSphere;
-      viewer.camera.flyToBoundingSphere(boundingSphere, {
-        duration: 3,
-        offset: new Cesium.HeadingPitchRange(0, -0.5, boundingSphere.radius * 2)
+    // Najprv získať Ion resource a až potom vytvoriť viewer
+    Cesium.IonResource.fromAssetId(1).then((terrainResource) => {
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrainProvider: new Cesium.CesiumTerrainProvider({
+          url: terrainResource
+        }),
+        timeline: false,
+        animation: false,
       });
-    }).otherwise(function(error) {
-      console.error('Chyba pri načítaní tilesetu:', error);
+
+      const tileset = new Cesium.Cesium3DTileset({
+        url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
+      });
+
+      viewer.scene.primitives.add(tileset);
+
+      tileset.readyPromise.then(() => {
+        const boundingSphere = tileset.boundingSphere;
+        viewer.camera.flyToBoundingSphere(boundingSphere, {
+          duration: 3,
+          offset: new Cesium.HeadingPitchRange(0, -0.5, boundingSphere.radius * 2)
+        });
+      }).otherwise(function (error) {
+        console.error('Chyba pri načítaní tilesetu:', error);
+      });
+    }).catch((error) => {
+      console.error('Chyba pri načítaní Cesium World Terrain:', error);
     });
   </script>
 </body>
