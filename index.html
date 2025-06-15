@@ -21,9 +21,9 @@
     // Nastav Cesium Ion access token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
-    // Vytvor viewer s terénom z Cesium World Terrain
+    // Vytvor viewer s Cesium World Terrain
     const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: Cesium.createWorldTerrain(),
+      terrainProvider: Cesium.WorldTerrain,
       timeline: false,
       animation: false,
     });
@@ -33,7 +33,7 @@
       url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
     }));
 
-    // Keď sa tileset načíta, nastav kameru
+    // Po načítaní tilesetu zameraj kameru
     tileset.ready.then(() => {
       viewer.zoomTo(tileset);
     }).catch((error) => {
