@@ -2,9 +2,9 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>Cesium Model</title>
-  <script src="https://cdn.jsdelivr.net/npm/cesium@1.113/Build/Cesium/Cesium.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/cesium@1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <title>Cesium Model Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/cesium@1.114/Build/Cesium/Cesium.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/cesium@1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
     html, body, #cesiumContainer {
       width: 100%;
@@ -21,22 +21,23 @@
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
     const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrain: Cesium.Terrain.fromWorldTerrain(), // moderný zápis
+      terrainProvider: Cesium.createWorldTerrain(),
       timeline: false,
       animation: false,
     });
 
-    // Načítaj tileset pomocou create3DTileset
-    Cesium.create3DTileset({
-      url: 'tileset.json'
-    }).then(tileset => {
-      viewer.scene.primitives.add(tileset);
+    const tileset = new Cesium.Cesium3DTileset({
+      url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
+    });
 
+    viewer.scene.primitives.add(tileset);
+
+    tileset.readyPromise.then(() => {
       viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
         duration: 3,
         offset: new Cesium.HeadingPitchRange(0, -0.5, tileset.boundingSphere.radius * 2)
       });
-    }).catch(error => {
+    }).otherwise(function(error) {
       console.error('Chyba pri načítaní tilesetu:', error);
     });
   </script>
