@@ -2,15 +2,14 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>Cesium Model Viewer cez Worker Proxy</title>
+  <title>Cesium Model Viewer</title>
   <script src="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Cesium.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
     html, body, #cesiumContainer {
       width: 100%;
       height: 100%;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       overflow: hidden;
     }
   </style>
@@ -21,7 +20,9 @@
     Cesium.Ion.defaultAccessToken = 'tvoj-token-tu';
 
     const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: Cesium.createWorldTerrain(),
+      terrainProvider: new Cesium.Cesium3DTerrainProvider({
+        url: Cesium.IonResource.fromAssetId(1)
+      }),
       timeline: false,
       animation: false,
     });
