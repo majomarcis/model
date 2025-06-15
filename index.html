@@ -2,7 +2,7 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>Cesium Model Viewer</title>
+  <title>Cesium Model Viewer cez Worker Proxy</title>
   <script src="https://cdn.jsdelivr.net/npm/cesium@1.114/Build/Cesium/Cesium.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/cesium@1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
@@ -18,22 +18,34 @@
 <body>
   <div id="cesiumContainer"></div>
   <script>
+    // Nastav svoj Cesium Ion token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
+    // Vytvor viewer s terénom
     const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrain: Cesium.WorldTerrain,
+      terrainProvider: Cesium.createWorldTerrain(),
       timeline: false,
       animation: false,
     });
 
-    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-      url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
-    }));
+    // URL na tileset cez tvoj worker
+    const tilesetUrl = 'https://tvoj-worker-subdomain.workers.dev/tileset.json';
 
-    tileset.ready.then(() => {
-      viewer.zoomTo(tileset);
-    }).catch((error) => {
-      console.error('Chyba pri načítaní tilesetu:', error);
+    // Pridaj tileset
+    const tileset = new Cesium.Cesium3DTileset({
+      url: tilesetUrl
+    });
+
+    viewer.scene.primitives.add(tileset);
+
+    // Po načítaní tilesetu nastav kameru
+    tileset.readyPromise.then(() => {
+      viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
+        duration: 3,
+        offset: new Cesium.HeadingPitchRange(0, -0.5, tileset.boundingSphere.radius * 2)
+      });
+    }).otherwise(error => {
+      console.error(error);
     });
   </script>
 </body>
