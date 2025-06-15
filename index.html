@@ -22,7 +22,7 @@
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxZWNiYjc2MS02ZGUzLTRmOWYtOGRkNy0wNDU0ZTRlNjkyNjQiLCJpZCI6MzEyMTI0LCJpYXQiOjE3NDk4OTY1NzZ9.Tq43QoZmRsmMIj30SQGz1B4GrjgjeKeBvG68K0mkH4k';
 
     // Vytvor viewer a nastav Cesium World Terrain ručne
-    const viewer = new Cesium.Viewer('cesiumContainer', {
+const viewer = new Cesium.Viewer('cesiumContainer', {
       terrainProvider: new Cesium.CesiumTerrainProvider({
         url: Cesium.IonResource.fromAssetId(1)
       }),
@@ -37,6 +37,7 @@
 
     viewer.scene.primitives.add(tileset);
 
+    // Access readyPromise on the tileset instance
     tileset.readyPromise.then(() => {
       const boundingSphere = tileset.boundingSphere;
       viewer.camera.flyToBoundingSphere(boundingSphere, {
