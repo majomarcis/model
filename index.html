@@ -1,39 +1,50 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>3D model (Cesium bez tokenu)</title>
-  <script src="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Cesium.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <title>Cesium 3D Tileset Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/cesium@1.109.1/Build/Cesium/Cesium.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/cesium@1.109.1/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
     html, body, #cesiumContainer {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+      background-color: #000;
     }
   </style>
 </head>
 <body>
   <div id="cesiumContainer"></div>
+
   <script>
-    const viewer = new Cesium.Viewer('cesiumContainer', {
+    // Inicializuj Cesium Viewer bez terénu a globe (iba prázdne prostredie)
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      terrainProvider: false,    // vypnutý terén
+      imageryProvider: false,    // vypnuté mapové vrstvy
       baseLayerPicker: false,
-      timeline: false,
-      animation: false,
       geocoder: false,
-      terrainProvider: undefined, // žiadny terén
+      homeButton: false,
+      sceneModePicker: false,
+      navigationHelpButton: false,
+      animation: false,
+      timeline: false,
+      fullscreenButton: false,
+      vrButton: false,
+      shouldAnimate: true
     });
 
-    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-      url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
-    }));
+    // URL na hlavný tileset priamo v koreňovom priečinku R2 cez worker proxy
+    const tilesetUrl = "https://cors-worker.majomarcis.workers.dev/tileset.json";
 
-    Cesium.when.ready(tileset).then(() => {
+    // Načítanie a pridanie tilesetu do scény
+    const tileset = new Cesium.Cesium3DTileset({ url: tilesetUrl });
+
+    viewer.scene.primitives.add(tileset);
+
+    // Po načítaní sa kamera priblíži na tileset
+    tileset.readyPromise.then(() => {
       viewer.zoomTo(tileset);
     }).otherwise((error) => {
-      console.error('Chyba pri načítaní tilesetu:', error);
+      console.error("Chyba pri načítaní tilesetu:", error);
     });
   </script>
 </body>
