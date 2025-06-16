@@ -2,26 +2,39 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>Three.js 3D Tiles Viewer</title>
-  <!-- Načítame es-module-shims na importmapy -->
-  <script async src="https://ga.jspm.io/npm:es-module-shims@1.4.4/dist/es-module-shims.js"></script>
-  <script type="importmap-shim">
-  {
-    "imports": {
-      "three": "https://cdn.skypack.dev/three@0.137.0",
-      "three/examples/jsm/loaders/GLTFLoader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/GLTFLoader",
-      "three/examples/jsm/loaders/DRACOLoader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/DRACOLoader",
-      "three/examples/jsm/loaders/KTX2Loader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/KTX2Loader",
-      "three-loader-3dtiles": "https://unpkg.com/three-loader-3dtiles/dist/lib/three-loader-3dtiles.js"
-    }
-  }
-  </script>
-  <!-- Način načítania cez importmap-shim -->
-  <script src="index.js" type="module-shim"></script>
+  <title>3D model (Cesium bez tokenu)</title>
+  <script src="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Cesium.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
-    body, html { margin: 0; height: 100%; }
-    canvas { display: block; width: 100%; height: 100%; }
+    html, body, #cesiumContainer {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
   </style>
 </head>
-<body></body>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      baseLayerPicker: false,
+      timeline: false,
+      animation: false,
+      geocoder: false,
+      terrainProvider: undefined, // žiadny terén
+    });
+
+    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url: 'https://pub-733ff73c2ae94bec9c60db61eaa071a3.r2.dev/tileset.json'
+    }));
+
+    Cesium.when.ready(tileset).then(() => {
+      viewer.zoomTo(tileset);
+    }).otherwise((error) => {
+      console.error('Chyba pri načítaní tilesetu:', error);
+    });
+  </script>
+</body>
 </html>
