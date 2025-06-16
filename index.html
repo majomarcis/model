@@ -2,43 +2,26 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>Cesium Model Viewer</title>
-  <script src="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Cesium.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/cesium@1.122/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
-  <style>
-    html, body, #cesiumContainer {
-      width: 100%;
-      height: 100%;
-      margin: 0; padding: 0;
-      overflow: hidden;
+  <title>Three.js 3D Tiles Viewer</title>
+  <!-- Načítame es-module-shims na importmapy -->
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.4.4/dist/es-module-shims.js"></script>
+  <script type="importmap-shim">
+  {
+    "imports": {
+      "three": "https://cdn.skypack.dev/three@0.137.0",
+      "three/examples/jsm/loaders/GLTFLoader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/GLTFLoader",
+      "three/examples/jsm/loaders/DRACOLoader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/DRACOLoader",
+      "three/examples/jsm/loaders/KTX2Loader.js": "https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/KTX2Loader",
+      "three-loader-3dtiles": "https://unpkg.com/three-loader-3dtiles/dist/lib/three-loader-3dtiles.js"
     }
+  }
+  </script>
+  <!-- Način načítania cez importmap-shim -->
+  <script src="index.js" type="module-shim"></script>
+  <style>
+    body, html { margin: 0; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; }
   </style>
 </head>
-<body>
-  <div id="cesiumContainer"></div>
-  <script>
-    Cesium.Ion.defaultAccessToken = 'tvoj-token-tu';
-
-    const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: new Cesium.Cesium3DTerrainProvider({
-        url: Cesium.IonResource.fromAssetId(1)
-      }),
-      timeline: false,
-      animation: false,
-    });
-
-    const tileset = new Cesium.Cesium3DTileset({
-      url: 'https://myworker.majomarcis.workers.dev/tileset.json'
-    });
-
-    viewer.scene.primitives.add(tileset);
-
-    tileset.ready.then(() => {
-      viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
-        duration: 3,
-        offset: new Cesium.HeadingPitchRange(0, -0.5, tileset.boundingSphere.radius * 2)
-      });
-    }).catch(console.error);
-  </script>
-</body>
+<body></body>
 </html>
